@@ -1,0 +1,72 @@
+# --------------------------------------------------------------
+# LAIKA Default Configuration File (With Comments)
+# --------------------------------------------------------------
+# DISCORD CONFIG STACK
+discord:
+  # Paste in your bot token here.
+  token: "DO NOT SHARE"
+  # The main guild the bot will recognize and do protection actions on.
+  mainGuild: ""
+  # The channel ID the bot will send important logging messages to.
+  logChannel: ""
+  # The user ID of the owner of the bot.
+  ownerId: ""
+  # The client ID of the bot (for invite generation)
+  clientId: ""
+  # Level of permissions for the invite (If you don't know this, use https://discordapi.com/permissions.html)
+  # If problems occur, you can use 8 (Administrator)
+  invitePermissionLevel: 8
+# MAIN CONFIG STACK/
+main:
+  # Currently, unimplemented, maybe in the future if performance becomes and issue.
+  sharded: false
+  # Activity Type (STREAMING|PLAYING|WATCHING|COMPETING|DEFAULT)
+  activityType: "PLAYING"
+  # Activity Message
+  activityMsg: "I do not know"
+  # Status type (ONLINE|IDLE|DO_NOT_DISTURB|INVISIBLE)
+  statusType: "IDLE"
+  # Responses for the default ping command
+  pingResponses:
+    - "Pinged the pentagon"
+    - "Pinged ahiga's basement"
+    - "Pinged googol.com"
+    - "Pinged you're mother"
+    - "Pinged 142.250.189.238"
+    - "Pinged eidak"
+    - "Pinged my brain"
+    - "Pinged steamcommmunity.com"
+    - "Pinged pong"
+    - "Pinged the admins"
+  credit:
+    # Responses to positive statements (for the ccp)
+    positiveResponses:
+      - ""
+    # Words the yield a positive response.
+    positiveTriggers:
+      - ""
+    # Responses to negative statements (toward the ccp)
+    negativeResponses:
+      - ""
+    # Words that yield a negative response.
+    negativeTriggers:
+      - ""
+    # Whether profanity detracts from credit standing or not
+    # note; if this is enabled negative responses will be fired to profanity.
+    profanePunish: true
+sql:
+  host: "localhost"
+  port: 3306
+  database: "laika"
+  username: "alpine"
+  password: "squidlover42069"
+siteBridge:
+  # Whether SQLite will be used. If not, the SQL credentials will be used instead.
+  sqlite: false
+  # If SQLite is enabled, the below path to the DB will be used.
+  sqliteFile: ""
+  host: "localhost"
+  port: 3306
+  database: "initiate"
+  username: "ahig"
+  password: "UOOOOOOOOH"
