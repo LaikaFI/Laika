@@ -1,10 +1,13 @@
 package space.initiate.Laika.command.utility;
 
+import link.alpinia.SlashComLib.SlashCommandInfo;
+import link.alpinia.SlashComLib.SlashCommandType;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.GenericContextInteractionEvent;
 import space.initiate.Laika.util.EmbedUI;
 import space.initiate.Laika.util.LoggingManager;
 import link.alpinia.SlashComLib.CommandClass;
 import link.alpinia.SlashComLib.CommandInfo;
-import link.alpinia.SlashComLib.CommandType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -21,12 +24,6 @@ import java.util.List;
  * @author Laika
  */
 public class DuckCommand extends CommandClass {
-    private boolean enabled = true;
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
 
     @Override
     public String getName() {
@@ -34,7 +31,7 @@ public class DuckCommand extends CommandClass {
     }
 
     @Override
-    public void newCommand(String name, SlashCommandInteractionEvent e) {
+    public void slashCommand(String name, SlashCommandInteractionEvent e) {
         if ("search".equals(name)) {
             e.deferReply().queue();
             String option = e.getOption("query").getAsString();
@@ -64,9 +61,19 @@ public class DuckCommand extends CommandClass {
     }
 
     @Override
-    public List<CommandInfo> getSlashCommandInfo() {
+    public void modalResponse(String s, ModalInteractionEvent modalInteractionEvent) {
+
+    }
+
+    @Override
+    public void contextResponse(String s, GenericContextInteractionEvent genericContextInteractionEvent, String s1) {
+
+    }
+
+    @Override
+    public List<CommandInfo> getCommandInfo() {
         List<CommandInfo> cil = new ArrayList<>();
-        CommandInfo ci = new CommandInfo("search", "Looks up with DuckDuckGo your query!", CommandType.COMMAND);
+        SlashCommandInfo ci = new SlashCommandInfo("search", "Looks up with DuckDuckGo your query!", SlashCommandType.COMMAND);
         ci.addOption("query", "The query to be searched", OptionType.STRING, true);
         cil.add(ci);
         return cil;

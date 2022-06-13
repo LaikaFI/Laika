@@ -1,10 +1,13 @@
 package space.initiate.Laika.command.utility;
 
+import link.alpinia.SlashComLib.SlashCommandInfo;
+import link.alpinia.SlashComLib.SlashCommandType;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.GenericContextInteractionEvent;
 import space.initiate.Laika.Laika;
 import space.initiate.Laika.util.EmbedUI;
 import link.alpinia.SlashComLib.CommandClass;
 import link.alpinia.SlashComLib.CommandInfo;
-import link.alpinia.SlashComLib.CommandType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -22,10 +25,6 @@ import static space.initiate.Laika.util.LoggingManager.slashLog;
  */
 public class PingCommand extends CommandClass {
     //Always true, ping cmd is EXISTENTIAL
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 
     @Override
     public String getName() {
@@ -33,7 +32,7 @@ public class PingCommand extends CommandClass {
     }
 
     @Override
-    public void newCommand(String name, SlashCommandInteractionEvent e) {
+    public void slashCommand(String name, SlashCommandInteractionEvent e) {
         if ("ping".equals(name.toLowerCase(Locale.ROOT))) {
             slashLog(e);
             e.deferReply().queue();
@@ -50,6 +49,16 @@ public class PingCommand extends CommandClass {
         }
     }
 
+    @Override
+    public void modalResponse(String s, ModalInteractionEvent modalInteractionEvent) {
+
+    }
+
+    @Override
+    public void contextResponse(String s, GenericContextInteractionEvent genericContextInteractionEvent, String s1) {
+
+    }
+
     private String getComedy() {
         Random r = new Random();
         return Laika.instance.config.getPingResponses().get(r.nextInt(Laika.instance.config.getPingResponses().size()));
@@ -57,9 +66,9 @@ public class PingCommand extends CommandClass {
 
 
     @Override
-    public List<CommandInfo> getSlashCommandInfo() {
+    public List<CommandInfo> getCommandInfo() {
         List<CommandInfo> si = new ArrayList<>();
-        CommandInfo ci = new CommandInfo("ping", "Returns bot latency with a twist!", CommandType.COMMAND);
+        SlashCommandInfo ci = new SlashCommandInfo("ping", "Returns bot latency with a twist!", SlashCommandType.COMMAND);
         si.add(ci);
         return si;
     }

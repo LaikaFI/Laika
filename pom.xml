@@ -31,10 +31,11 @@
             <scope>compile</scope>
             <type>jar</type>
         </dependency>
+        <!-- Buggy Mess -->
         <dependency>
             <groupId>com.github.LaikaFI</groupId>
             <artifactId>SlashComLib</artifactId>
-            <version>v1.1.0</version>
+            <version>73e0964a</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

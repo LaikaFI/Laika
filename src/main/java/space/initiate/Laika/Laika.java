@@ -1,7 +1,8 @@
 package space.initiate.Laika;
 
+import space.initiate.Laika.model.bridge.BridgeDB;
 import space.initiate.Laika.model.LaikaDB;
-import space.initiate.Laika.model.ServerManager;
+import space.initiate.Laika.model.manager.ServerManager;
 import space.initiate.Laika.util.EmbedUI;
 import space.initiate.Laika.util.LoggingManager;
 import space.initiate.Laika.listener.MainListener;
@@ -14,8 +15,6 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -63,12 +62,27 @@ public class Laika {
      * @param args - Arguments for program start.
      */
     public static void main(String[] args) {
-        try {
-            var jas = new Laika();
-            jas.start();
-        } catch (Exception ex) {
-            System.out.println("Failed to start Laika, check your Java installation.");
-            ex.printStackTrace();
+        if(args.length > 0) {
+            switch (args[0].toLowerCase()) {
+                case "-convert" -> {
+                    //Convert legacy DB to updated DB without starting bot.
+                    var init = new Laika();
+                    instance = init;
+                    init.convertLegacyFile(args[1]);
+                }
+                default -> {
+                    //Help
+                    LoggingManager.info(cliHelpPrompt());
+                }
+            }
+        } else {
+            try {
+                var jas = new Laika();
+                jas.start();
+            } catch (Exception ex) {
+                System.out.println("Failed to start Laika, check your Java installation.");
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -83,39 +97,8 @@ public class Laika {
         registrar = new CommandRegistrar();
         activeCommands = registrar.getCommandClasses("space.initiate.Laika.command");
 
-        // Ensuring the configuration file is generated and/or exists.
-        if (!CONFIG_FILE.exists()) {
-            try (InputStream is = this.getClass().getClassLoader().getResourceAsStream("config.yml")) {
-                // Save the default config
-                Files.copy(is, CONFIG_FILE.toPath());
-                LoggingManager.info("Default Configuration saved to run directory. You will need to modify this before running the bot.");
-                return;
-            } catch (Exception ex) {
-                LoggingManager.warn("Failed to create the configuration file. Stopping. (" + CONFIG_FILE.getAbsolutePath() + ")");
-                ex.printStackTrace();
-                return;
-            }
-        }
-
-        // Try to load configuration into the configuration API.
-        try {
-            yamlConfiguration.load("config.yml");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            LoggingManager.warn("File not found, must've failed to create...");
-        } catch (Exception e) {
-            LoggingManager.warn("Ensure all values are inputted properly.");
-            e.printStackTrace();
-        }
-
-        // Initializes our configuration helper & ensures it loads properly.
-        config = new LaikaConfig(yamlConfiguration);
-        if(config.load()) {
-            LoggingManager.info("Fetched Laika config.");
-        } else {
-            LoggingManager.error("Failed to load configuration. Stopping process.");
-            Runtime.getRuntime().exit(0);
-        }
+        //Load Configuration from system.
+        tryLoadConfig();
 
         // Registers the stop() function if the program is stopped.
         LoggingManager.info("Registering shutdown hook.");
@@ -196,4 +179,53 @@ public class Laika {
     public ServerManager getServerManager() { return serverManager; }
 
     public String getName() { return name; }
+
+    private void tryLoadConfig() {
+        if (!CONFIG_FILE.exists()) {
+            try (InputStream is = this.getClass().getClassLoader().getResourceAsStream("config.yml")) {
+                // Save the default config
+                Files.copy(is, CONFIG_FILE.toPath());
+                LoggingManager.info("Default Configuration saved to run directory. You will need to modify this before running the bot.");
+                return;
+            } catch (Exception ex) {
+                LoggingManager.warn("Failed to create the configuration file. Stopping. (" + CONFIG_FILE.getAbsolutePath() + ")");
+                ex.printStackTrace();
+                return;
+            }
+        }
+
+        // Try to load configuration into the configuration API.
+        try {
+            yamlConfiguration.load("config.yml");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            LoggingManager.warn("File not found, must've failed to create...");
+        } catch (Exception e) {
+            LoggingManager.warn("Ensure all values are inputted properly.");
+            e.printStackTrace();
+        }
+        config = new LaikaConfig(yamlConfiguration);
+
+        // Initializes our configuration helper & ensures it loads properly.
+        if(config.load()) {
+            LoggingManager.info("Fetched Laika config.");
+        } else {
+            LoggingManager.error("Failed to load configuration. Stopping process.");
+            Runtime.getRuntime().exit(0);
+        }
+    }
+
+    public static String cliHelpPrompt() {
+        return """
+                -convert <file> - converts legacy Laika SQLite3 DB to SQL Database, this dumps into the DB defined in Config.
+                -help - displays this prompt.
+                """;
+    }
+
+    public void convertLegacyFile(String location) {
+        LoggingManager.warn("!!! CONVERSION OF PRIOR ASSETS WILL DUMP TO DB, USE WITH CARE !!!");
+        var bridge = new BridgeDB(location);
+        tryLoadConfig();
+        bridge.convertLegacyLaikaDB();
+    }
 }

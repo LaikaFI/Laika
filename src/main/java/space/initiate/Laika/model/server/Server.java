@@ -1,4 +1,4 @@
-package space.initiate.Laika.model;
+package space.initiate.Laika.model.server;
 
 import space.initiate.Laika.Laika;
 
@@ -18,7 +18,7 @@ public class Server {
     // The role to be assigned on join, if null ignored.
     private String joinRole;
     //Moderation role, used for /mod
-    private String modChannel;
+    private String modRole;
     //Are levels enabled?
     private boolean levelsEnabled;
     //If the server has been modified in memory, for saving persistently.
@@ -31,7 +31,7 @@ public class Server {
     public Server(String id) {
         this.id = id;
         this.welcomeChannel = null;
-        this.modChannel = null;
+        this.modRole = null;
         this.joinRole = null;
         this.levelsEnabled = false;
         this.modified = false;
@@ -45,7 +45,7 @@ public class Server {
     public Server(String id, @Nullable String welcomeChannel, @Nullable String joinRole, String modChannel, boolean levelsEnabled) {
         this.id = id;
         this.welcomeChannel = welcomeChannel;
-        this.modChannel = modChannel;
+        this.modRole = modChannel;
         this.joinRole = joinRole;
         this.modified = false;
         this.levelsEnabled = true;
@@ -55,7 +55,7 @@ public class Server {
 
     public String getJoinRole() { return joinRole; }
 
-    public String getModChannel() { return modChannel; }
+    public String getModRole() { return modRole; }
 
     public String getWelcomeChannel() {
         return welcomeChannel;
@@ -90,7 +90,7 @@ public class Server {
     public String getOpts() {
         return """
                 welcomeChannel - the channel to send welcome messages to (id)
-                modChannel - the channel to send moderation logs to (id)
+                modrole - the moderation role for this guild (id)
                 joinRole - the role to apply to new members who join this guild (id)
                 levelsEnabled - whether the credit system is enabled on this guild (true/false)""";
     }
@@ -104,7 +104,7 @@ public class Server {
         return switch (string.toLowerCase()) {
             case "joinrole" -> joinRole;
             case "welcomechannel" -> welcomeChannel;
-            case "modchannel" -> modChannel;
+            case "modrole" -> modRole;
             case "levelsenabled" -> String.valueOf(levelsEnabled);
             default -> "INVALID";
         };
@@ -123,9 +123,9 @@ public class Server {
             case "welcomechannel":
                 welcomeChannel = null;
                 return "Welcome channel is now unset.";
-            case "modchannel":
-                modChannel = null;
-                return "Mod channel is now unset.";
+            case "modrole":
+                modRole = null;
+                return "Mod role is now unset.";
             case "levelsenabled":
                 levelsEnabled = false;
                 return "Levels have now been disabled.";
@@ -165,16 +165,16 @@ public class Server {
                 } catch (Exception ex) {
                     return "That is not a valid channel ID";
                 }
-            case "modchannel":
+            case "modrole":
                 try {
-                    if(Laika.JDA.getTextChannelById(value) == null) {
-                        return "That channel ID is invalid.";
+                    if(Laika.JDA.getRoleById(value) == null) {
+                        return "That role ID is invalid.";
                     } else {
-                        modChannel = value;
-                        return "Successfully set modChannel ID to " + modChannel;
+                        modRole = value;
+                        return "Successfully set modRole ID to " + modRole;
                     }
                 } catch (Exception ex) {
-                    return "That is not a valid channel ID";
+                    return "That is not a valid role ID";
                 }
             case "levelsenabled":
                 try {
@@ -191,6 +191,6 @@ public class Server {
     @Override
     public String toString() {
         return "Server [id=" + this.id + ",welcomeChannel="+welcomeChannel+
-                ",joinrole=" + joinRole + ",modChannel=" + modChannel + ",levelsEnabled=" + levelsEnabled +"]";
+                ",joinrole=" + joinRole + ",modRole=" + modRole + ",levelsEnabled=" + levelsEnabled +"]";
     }
 }

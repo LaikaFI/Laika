@@ -1,9 +1,12 @@
 package space.initiate.Laika.command.image;
 
+import link.alpinia.SlashComLib.SlashCommandInfo;
+import link.alpinia.SlashComLib.SlashCommandType;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.GenericContextInteractionEvent;
 import space.initiate.Laika.util.EmbedUI;
 import link.alpinia.SlashComLib.CommandClass;
 import link.alpinia.SlashComLib.CommandInfo;
-import link.alpinia.SlashComLib.CommandType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -19,14 +22,12 @@ import static space.initiate.Laika.util.LoggingManager.slashLog;
  * @author dumbass
  */
 public class AvatarCommand extends CommandClass {
-    @Override
-    public boolean isEnabled() { return true; }
 
     @Override
     public String getName() { return "Avatar"; }
 
     @Override
-    public void newCommand(String name, SlashCommandInteractionEvent e) {
+    public void slashCommand(String name, SlashCommandInteractionEvent e) {
         if ("avatar".equals(name)) {
             e.deferReply().queue();
 
@@ -46,9 +47,19 @@ public class AvatarCommand extends CommandClass {
     }
 
     @Override
-    public List<CommandInfo> getSlashCommandInfo() {
+    public void modalResponse(String s, ModalInteractionEvent modalInteractionEvent) {
+
+    }
+
+    @Override
+    public void contextResponse(String s, GenericContextInteractionEvent genericContextInteractionEvent, String s1) {
+
+    }
+
+    @Override
+    public List<CommandInfo> getCommandInfo() {
         List<CommandInfo> cil = new ArrayList<>();
-        var ci = new CommandInfo("avatar", "Returns the avatar of the specified user.", CommandType.COMMAND);
+        var ci = new SlashCommandInfo("avatar", "Returns the avatar of the specified user.", SlashCommandType.COMMAND);
         ci.addOption("user", "User to fetch.", OptionType.USER, false);
         cil.add(ci);
         return cil;

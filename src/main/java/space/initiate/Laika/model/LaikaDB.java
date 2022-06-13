@@ -1,5 +1,7 @@
 package space.initiate.Laika.model;
 
+import space.initiate.Laika.model.server.Server;
+import space.initiate.Laika.model.user.LegacyLaikaUser;
 import space.initiate.Laika.util.LoggingManager;
 import space.initiate.Laika.Laika;
 import net.dv8tion.jda.api.entities.Guild;
@@ -21,12 +23,18 @@ public class LaikaDB {
 
     // The prepared statement strings
     private final String CREATE_SERVERINFO_TABLE = "CREATE TABLE IF NOT EXISTS `serverInfo`" +
-            "(`id` LONGTEXT NOT NULL, `welcomeChannel` LONGTEXT NULL, `modChannel` LONGTEXT NULL, `joinRole` LONGTEXT NULL, `levelsEnabled` LONGTEXT NOT NULL);";
-    private final String INSERT_SERVERINFO_DEFAULT = "INSERT INTO serverInfo(id, welcomeChannel, modChannel, joinRole, levelsEnabled) values (?,?,?,?,?)";
-    private final String SERVERINFO_EXISTS = "select * from serverInfo where id = ?";
-    private final String SERVER_INFO_LOAD = "select * from serverInfo";
+            "(`id` LONGTEXT NOT NULL, `welcomeChannel` LONGTEXT NULL, `modRole` LONGTEXT NULL, `joinRole` LONGTEXT NULL, `levelsEnabled` LONGTEXT NOT NULL);";
+    private final String CREATE_USER_TABLE = "CREATE TABLE IF NOT EXISTS `user`(`UserID` LONGTEXT NOT NULL, `XP` BIGINT NOT NULL, `Level` BIGINT NOT NULL," +
+            "`Nword` BIGINT NOT NULL, `Credit` BIGINT NOT NULL, `XPLock` LONGTEXT);";
+    private final String INSERT_LEGACY_USER = "INSERT INTO user(UserID, XP, Level, Nword, Credit, XPLock) values (?,?,?,?,?,?);";
+    private final String INSERT_SERVERINFO_DEFAULT = "INSERT INTO serverInfo(id, welcomeChannel, modRole, joinRole, levelsEnabled) values (?,?,?,?,?);";
+    private final String SERVERINFO_EXISTS = "select * from serverInfo where id = ?;";
+    private final String SERVER_INFO_LOAD = "select * from serverInfo;";
+    private final String USER_LOAD = "SELECT * FROM user;";
+    //1 xp, 2 lvl, 3 nword, 4 credit, 5 xplock, 6 userid
+    private final String USER_UPDATE = "UPDATE `user` SET XP=?, Level=?, Nword=?, Credit=?, XPLock=? WHERE UserID = ?;";
     // 1 = welcomeChannel, 2 = modChannel , 3 = joinRole, levelsEnabled = 4, 5 = Guild_ID (immutable)
-    private final String SERVER_INFO_MODIFY = "UPDATE `serverInfo` SET welcomeChannel=?, modChannel=?, joinRole=?, levelsEnabled=? WHERE id = ?";
+    private final String SERVER_INFO_MODIFY = "UPDATE `serverInfo` SET welcomeChannel=?, modRole=?, joinRole=?, levelsEnabled=? WHERE id = ?";
 
     /**
      * JasperDB Config Constructor
@@ -54,6 +62,7 @@ public class LaikaDB {
     private void initializeTables() {
         try {
             connection.prepareStatement(CREATE_SERVERINFO_TABLE).execute();
+            connection.prepareStatement(CREATE_USER_TABLE).execute();
         } catch (Exception ex) {
             ex.printStackTrace();
             LoggingManager.error("Failed to initialize SQL tables. They may need to be created manually.");
@@ -106,10 +115,10 @@ public class LaikaDB {
                 LoggingManager.info("Starting new load for server: " + rs.getString(1));
                 String id = rs.getString(1);
                 String welcomeChannel = rs.getString(2);
-                String modChannel = rs.getString(3);
+                String modRole = rs.getString(3);
                 String joinRole = rs.getString(4);
                 var levelsEnabled = Boolean.parseBoolean(rs.getString(5));
-                Server server = new Server(id, welcomeChannel, modChannel, joinRole, levelsEnabled);
+                Server server = new Server(id, welcomeChannel, modRole, joinRole, levelsEnabled);
                 LoggingManager.debug("Loaded " + server + "from database.");
                 servers.add(server);
             }
@@ -140,8 +149,8 @@ public class LaikaDB {
                 } else {
                     ps.setNull(1, Types.LONGVARCHAR);
                 }
-                if(server.getModChannel() != null) {
-                    ps.setString(2, server.getModChannel());
+                if(server.getModRole() != null) {
+                    ps.setString(2, server.getModRole());
                 } else {
                     ps.setNull(2, Types.LONGVARCHAR);
                 }
@@ -162,6 +171,33 @@ public class LaikaDB {
             LoggingManager.error("Failed to persist server data. Check stack.");
             ex.printStackTrace();
             return false;
+        }
+    }
+
+    public boolean saveUserInformation() {
+        //TODO
+        return false;
+    }
+
+    public void saveConvertedUsers(List<LegacyLaikaUser> list) {
+        try {
+            PreparedStatement saveLegacy = connection.prepareStatement(INSERT_LEGACY_USER);
+            int i = 0;
+            for(LegacyLaikaUser user : list) {
+                saveLegacy.setString(1, user.getUserId());
+                saveLegacy.setInt(2, user.getXp());
+                saveLegacy.setInt(3, user.getLevel());
+                saveLegacy.setInt(4, user.getNword());
+                saveLegacy.setInt(5, user.getCredit());
+                saveLegacy.setString(6, user.getXPLock());
+                saveLegacy.addBatch();
+                i++;
+            }
+            saveLegacy.executeBatch();
+            LoggingManager.info("Successfully converted " + i + " to MySQL Database.");
+        } catch (Exception ex) {
+            LoggingManager.error("Failed to save converted users.");
+            ex.printStackTrace();
         }
     }
 }

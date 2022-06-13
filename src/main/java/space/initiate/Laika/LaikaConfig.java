@@ -1,6 +1,6 @@
 package space.initiate.Laika;
 
-import space.initiate.Laika.model.BridgeDB;
+import space.initiate.Laika.model.bridge.BridgeDB;
 import space.initiate.Laika.model.LaikaDB;
 import space.initiate.Laika.util.LoggingManager;
 import org.simpleyaml.configuration.file.YamlConfiguration;

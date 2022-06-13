@@ -1,9 +1,12 @@
 package space.initiate.Laika.command.fun;
 
+import link.alpinia.SlashComLib.SlashCommandInfo;
+import link.alpinia.SlashComLib.SlashCommandType;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.GenericContextInteractionEvent;
 import space.initiate.Laika.util.EmbedUI;
 import link.alpinia.SlashComLib.CommandClass;
 import link.alpinia.SlashComLib.CommandInfo;
-import link.alpinia.SlashComLib.CommandType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -23,10 +26,6 @@ import static space.initiate.Laika.util.LoggingManager.slashLog;
  * @author Laika
  */
 public class FightCommand extends CommandClass {
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 
     @Override
     public String getName() {
@@ -34,7 +33,7 @@ public class FightCommand extends CommandClass {
     }
 
     @Override
-    public void newCommand(String name, SlashCommandInteractionEvent e) {
+    public void slashCommand(String name, SlashCommandInteractionEvent e) {
         if ("fight".equals(name)) {
             slashLog(e);
             e.deferReply().queue();
@@ -66,9 +65,19 @@ public class FightCommand extends CommandClass {
     }
 
     @Override
-    public List<CommandInfo> getSlashCommandInfo() {
+    public void modalResponse(String s, ModalInteractionEvent modalInteractionEvent) {
+
+    }
+
+    @Override
+    public void contextResponse(String s, GenericContextInteractionEvent genericContextInteractionEvent, String s1) {
+
+    }
+
+    @Override
+    public List<CommandInfo> getCommandInfo() {
         List<CommandInfo> cil = new ArrayList<>();
-        var ci = new CommandInfo("fight", "MORTALLL KOMBATTTT", CommandType.COMMAND);
+        var ci = new SlashCommandInfo("fight", "MORTALLL KOMBATTTT", SlashCommandType.COMMAND);
         ci.addOption("value1", "first fighter", OptionType.USER, true);
         ci.addOption("value2", "second fighter", OptionType.USER, true);
         ci.addOption("value3", "third fighter", OptionType.USER, false);

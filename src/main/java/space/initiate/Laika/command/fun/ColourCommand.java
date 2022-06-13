@@ -1,9 +1,12 @@
 package space.initiate.Laika.command.fun;
 
+import link.alpinia.SlashComLib.SlashCommandInfo;
+import link.alpinia.SlashComLib.SlashCommandType;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.GenericContextInteractionEvent;
 import space.initiate.Laika.util.LoggingManager;
 import link.alpinia.SlashComLib.CommandClass;
 import link.alpinia.SlashComLib.CommandInfo;
-import link.alpinia.SlashComLib.CommandType;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -13,10 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ColourCommand extends CommandClass {
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 
     @Override
     public String getName() {
@@ -24,7 +23,7 @@ public class ColourCommand extends CommandClass {
     }
 
     @Override
-    public void newCommand(String s, SlashCommandInteractionEvent e) {
+    public void slashCommand(String s, SlashCommandInteractionEvent e) {
         if(s.equals("color")) {
             e.deferReply(true).queue(); //It's a color, we don't need it to be "AAAAAAAAA PUBLIC"
             LoggingManager.slashLog(e);
@@ -50,6 +49,16 @@ public class ColourCommand extends CommandClass {
         }
     }
 
+    @Override
+    public void modalResponse(String s, ModalInteractionEvent modalInteractionEvent) {
+
+    }
+
+    @Override
+    public void contextResponse(String s, GenericContextInteractionEvent genericContextInteractionEvent, String s1) {
+
+    }
+
     private void trySetRole(Color color, String hex, SlashCommandInteractionEvent e) {
         if(e.getGuild().getRolesByName(hex, true).size() != 0) {
             //role already exists.
@@ -63,9 +72,9 @@ public class ColourCommand extends CommandClass {
     }
 
     @Override
-    public List<CommandInfo> getSlashCommandInfo() {
+    public List<CommandInfo> getCommandInfo() {
         List<CommandInfo> cis = new ArrayList<>();
-        var ci = new CommandInfo("color", "Lets you create a custom role that sets your color.", CommandType.COMMAND);
+        var ci = new SlashCommandInfo("color", "Lets you create a custom role that sets your color.", SlashCommandType.COMMAND);
         ci.addOption("color", "the color you would like, in HEX format.", OptionType.STRING, true);
         cis.add(ci);
         return cis;

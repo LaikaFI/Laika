@@ -8,13 +8,16 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import link.alpinia.SlashComLib.SlashCommandInfo;
+import link.alpinia.SlashComLib.SlashCommandType;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.GenericContextInteractionEvent;
 import space.initiate.Laika.model.audio.AudioInfo;
 import space.initiate.Laika.model.audio.AudioPlayerSendHandler;
 import space.initiate.Laika.model.audio.TrackManager;
 import space.initiate.Laika.util.EmbedUI;
 import link.alpinia.SlashComLib.CommandClass;
 import link.alpinia.SlashComLib.CommandInfo;
-import link.alpinia.SlashComLib.CommandType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -57,17 +60,12 @@ public class MusicCommand extends CommandClass {
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
     public String getName() {
         return "Music";
     }
 
     @Override
-    public void newCommand(String name, SlashCommandInteractionEvent e) {
+    public void slashCommand(String name, SlashCommandInteractionEvent e) {
         if(e.getGuild() != null) {
             switch (name) {
                 case "nowplaying":
@@ -201,19 +199,29 @@ public class MusicCommand extends CommandClass {
         }
     }
 
+    @Override
+    public void modalResponse(String s, ModalInteractionEvent modalInteractionEvent) {
+
+    }
+
+    @Override
+    public void contextResponse(String s, GenericContextInteractionEvent genericContextInteractionEvent, String s1) {
+
+    }
+
     private boolean hasPlayer(Guild guild) {
         return players.containsKey(guild.getId());
     }
 
     @Override
-    public List<CommandInfo> getSlashCommandInfo() {
+    public List<CommandInfo> getCommandInfo() {
         List<CommandInfo> cil = new ArrayList<>();
-        CommandInfo ci = new CommandInfo("nowplaying", "Displays the song being currently played.", CommandType.COMMAND);
-        CommandInfo ci1 = new CommandInfo("queue", "Displays the songs currently queued.", CommandType.COMMAND);
-        CommandInfo ci2 = new CommandInfo("skip", "Votes to skip the song currently playing. Or just skips it if you're the DJ.", CommandType.COMMAND);
-        CommandInfo ci3 = new CommandInfo("forceskip", "Forcibly skips the song that is currently playing.", CommandType.COMMAND);
-        CommandInfo ci4 = new CommandInfo("reset", "Resets the song player. (Admin Only)", CommandType.COMMAND);
-        CommandInfo ci5 = new CommandInfo("play", "Plays a new song from a URL", CommandType.COMMAND);
+        SlashCommandInfo ci = new SlashCommandInfo("nowplaying", "Displays the song being currently played.", SlashCommandType.COMMAND);
+        SlashCommandInfo ci1 = new SlashCommandInfo("queue", "Displays the songs currently queued.", SlashCommandType.COMMAND);
+        SlashCommandInfo ci2 = new SlashCommandInfo("skip", "Votes to skip the song currently playing. Or just skips it if you're the DJ.", SlashCommandType.COMMAND);
+        SlashCommandInfo ci3 = new SlashCommandInfo("forceskip", "Forcibly skips the song that is currently playing.", SlashCommandType.COMMAND);
+        SlashCommandInfo ci4 = new SlashCommandInfo("reset", "Resets the song player. (Admin Only)", SlashCommandType.COMMAND);
+        SlashCommandInfo ci5 = new SlashCommandInfo("play", "Plays a new song from a URL", SlashCommandType.COMMAND);
         ci5.addOption("url", "The URL or title of the song that you wanted to play.", OptionType.STRING, true);
         cil.add(ci);
         cil.add(ci1);

@@ -1,7 +1,8 @@
-package space.initiate.Laika.model;
+package space.initiate.Laika.model.manager;
 
 import space.initiate.Laika.Laika;
 import net.dv8tion.jda.api.entities.Guild;
+import space.initiate.Laika.model.server.Server;
 
 import java.util.Collection;
 import java.util.HashMap;

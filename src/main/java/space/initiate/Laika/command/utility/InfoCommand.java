@@ -1,10 +1,13 @@
 package space.initiate.Laika.command.utility;
 
+import link.alpinia.SlashComLib.SlashCommandInfo;
+import link.alpinia.SlashComLib.SlashCommandType;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.GenericContextInteractionEvent;
 import space.initiate.Laika.util.EmbedUI;
 import space.initiate.Laika.util.LoggingManager;
 import link.alpinia.SlashComLib.CommandClass;
 import link.alpinia.SlashComLib.CommandInfo;
-import link.alpinia.SlashComLib.CommandType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -15,21 +18,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static space.initiate.Laika.util.LoggingManager.slashLog;
 
 /**
  * Helpful User Information Command
  * @author dumbass
  */
 public class InfoCommand extends CommandClass {
-    @Override
-    public boolean isEnabled() { return true; }
 
     @Override
     public String getName() { return "Info"; }
 
     @Override
-    public void newCommand(String name, SlashCommandInteractionEvent e) {
+    public void slashCommand(String name, SlashCommandInteractionEvent e) {
         switch (name){
             case "userinfo":
                 e.deferReply().queue();
@@ -76,12 +76,22 @@ public class InfoCommand extends CommandClass {
     }
 
     @Override
-    public List<CommandInfo> getSlashCommandInfo() {
+    public void modalResponse(String s, ModalInteractionEvent modalInteractionEvent) {
+
+    }
+
+    @Override
+    public void contextResponse(String s, GenericContextInteractionEvent genericContextInteractionEvent, String s1) {
+
+    }
+
+    @Override
+    public List<CommandInfo> getCommandInfo() {
         List<CommandInfo> cil = new ArrayList<>();
-        CommandInfo ci = new CommandInfo("userinfo", "Returns information about a user.", CommandType.COMMAND);
+        SlashCommandInfo ci = new SlashCommandInfo("userinfo", "Returns information about a user.", SlashCommandType.COMMAND);
         ci.addOption("user", "The user to get information about.", OptionType.USER, false);
 
-        CommandInfo ci2 = new CommandInfo("serverinfo", "Returns information about the server.", CommandType.COMMAND);
+        SlashCommandInfo ci2 = new SlashCommandInfo("serverinfo", "Returns information about the server.", SlashCommandType.COMMAND);
 
         cil.add(ci);
         cil.add(ci2);

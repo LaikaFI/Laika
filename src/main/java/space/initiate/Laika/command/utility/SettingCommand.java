@@ -1,11 +1,14 @@
 package space.initiate.Laika.command.utility;
 
+import link.alpinia.SlashComLib.SlashCommandInfo;
+import link.alpinia.SlashComLib.SlashCommandType;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.GenericContextInteractionEvent;
 import space.initiate.Laika.Laika;
-import space.initiate.Laika.model.Server;
+import space.initiate.Laika.model.server.Server;
 import space.initiate.Laika.util.EmbedUI;
 import link.alpinia.SlashComLib.CommandClass;
 import link.alpinia.SlashComLib.CommandInfo;
-import link.alpinia.SlashComLib.CommandType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -24,10 +27,6 @@ import static space.initiate.Laika.util.LoggingManager.slashResponse;
  * @author Laika
  */
 public class SettingCommand extends CommandClass {
-    @Override
-    public boolean isEnabled() {
-        return true; // Another non-disable command
-    }
 
     @Override
     public String getName() {
@@ -35,7 +34,7 @@ public class SettingCommand extends CommandClass {
     }
 
     @Override
-    public void newCommand(String name, SlashCommandInteractionEvent e) {
+    public void slashCommand(String name, SlashCommandInteractionEvent e) {
         if(e.getGuild() != null) {
             Server server = Laika.instance.getServerManager().getOrCreateServer(e.getGuild());
             switch (name) {
@@ -109,44 +108,54 @@ public class SettingCommand extends CommandClass {
     }
 
     @Override
-    public List<CommandInfo> getSlashCommandInfo() {
+    public List<CommandInfo> getCommandInfo() {
         List<CommandInfo> si = new ArrayList<>();
 
-        CommandInfo ci2 = new CommandInfo("setting", "Permits modification, viewing, and clearing of settings.", CommandType.COMMAND);
+        SlashCommandInfo ci2 = new SlashCommandInfo("setting", "Permits modification, viewing, and clearing of settings.", SlashCommandType.COMMAND);
         // For those looking here for inspiration, you CANNOT mix options and subcommands. You can only have one or the other.
 
-        CommandInfo ci = new CommandInfo("view", "Shows the current value for the setting provided.", CommandType.SUBCOMMAND);
+        SlashCommandInfo ci = new SlashCommandInfo("view", "Shows the current value for the setting provided.", SlashCommandType.SUBCOMMAND);
         OptionData od = new OptionData(OptionType.STRING, "name", "The name of the setting to display", true);
         od.addChoice("JOINROLE", "JOINROLE");
         od.addChoice("WELCOMECHANNEL", "WELCOMECHANNEL");
-        od.addChoice("MODCHANNEL","MODCHANNEL");
+        od.addChoice("MODROLE","MODROLE");
         od.addChoice("LEVELSENABLED", "LEVELSENABLED");
         ci.addOption(od);
         ci2.addSubcommand(ci);
 
-        CommandInfo ci3 = new CommandInfo("set", "sets a setting for the guild you are in", CommandType.SUBCOMMAND);
+        SlashCommandInfo ci3 = new SlashCommandInfo("set", "sets a setting for the guild you are in", SlashCommandType.SUBCOMMAND);
         OptionData od2 = new OptionData(OptionType.STRING, "name", "The name of the setting to display", true);
         od2.addChoice("JOINROLE", "JOINROLE");
         od2.addChoice("WELCOMECHANNEL", "WELCOMECHANNEL");
-        od2.addChoice("MODCHANNEL","MODCHANNEL");
+        od2.addChoice("MODROLE","MODROLE");
         od2.addChoice("LEVELSENABLED", "LEVELSENABLED");
         ci3.addOption(od2);
         ci3.addOption("value", "The value to set the setting to", OptionType.STRING, true);
         ci2.addSubcommand(ci3);
 
-        CommandInfo ci4 = new CommandInfo("clear", "reverts a setting back to its default value", CommandType.SUBCOMMAND);
+        SlashCommandInfo ci4 = new SlashCommandInfo("clear", "reverts a setting back to its default value", SlashCommandType.SUBCOMMAND);
         OptionData od3 = new OptionData(OptionType.STRING, "name", "The name of the setting to display", true);
         od3.addChoice("JOINROLE", "JOINROLE");
         od3.addChoice("WELCOMECHANNEL", "WELCOMECHANNEL");
-        od3.addChoice("MODCHANNEL","MODCHANNEL");
+        od3.addChoice("MODROLE","MODROLE");
         od3.addChoice("LEVELSENABLED", "LEVELSENABLED");
         ci4.addOption(od3);
         ci2.addSubcommand(ci4);
 
-        CommandInfo ci5 = new CommandInfo("settings", "displays all settings available for the guild.", CommandType.COMMAND);
+        SlashCommandInfo ci5 = new SlashCommandInfo("settings", "displays all settings available for the guild.", SlashCommandType.COMMAND);
         si.add(ci5);
 
         si.add(ci2);
         return si;
+    }
+
+    @Override
+    public void modalResponse(String s, ModalInteractionEvent modalInteractionEvent) {
+
+    }
+
+    @Override
+    public void contextResponse(String s, GenericContextInteractionEvent genericContextInteractionEvent, String s1) {
+
     }
 }
