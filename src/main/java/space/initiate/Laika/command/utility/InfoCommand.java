@@ -69,7 +69,8 @@ public class InfoCommand extends CommandClass {
                         .addField("Other", "Roles: **" + guild.getRoles().size() + "** \n"
                                 + "Created: " + guild.getTimeCreated().format(dTF2), true)
                         .setThumbnail(guild.getIconUrl())
-                        .setFooter("ID: " + guild.getId());
+                        //Discord has deprecated server regions, however audio channels still have them.
+                        .setFooter("ID: " + guild.getId() + " | REGION: " + guild.getVoiceChannels().get(0).getRegion().getName());
                 e.getHook().sendMessageEmbeds(eb2.build()).queue();
 
         }

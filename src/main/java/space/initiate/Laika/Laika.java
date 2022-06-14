@@ -44,7 +44,11 @@ public class Laika {
 
     public static final String footer = name + " - " + "1.0.0-rel";
 
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
     public static Laika instance;
+
+    private ZonedDateTime startTime;
 
     private CommandRegistrar registrar;
 
@@ -55,6 +59,7 @@ public class Laika {
     public LaikaConfig config;
 
     public LaikaDB database;
+    public BridgeDB bridge;
     public ServerManager serverManager;
 
     /**
@@ -106,9 +111,11 @@ public class Laika {
 
         // Initializes database and loads credentials.
         database = config.createDb();
+        bridge = config.createBridge();
 
         serverManager = new ServerManager();
 
+        startTime = ZonedDateTime.now();
         // Makes our JDA instance.
         startDiscord();
     }
@@ -175,8 +182,13 @@ public class Laika {
     // Gets the active database.
     public LaikaDB getDatabase() { return database; }
 
+    // Gets active website bridge.
+    public BridgeDB getBridge() { return bridge; }
+
     // Gets active ServerManager
     public ServerManager getServerManager() { return serverManager; }
+
+    public ZonedDateTime getStartTime() { return startTime; }
 
     public String getName() { return name; }
 

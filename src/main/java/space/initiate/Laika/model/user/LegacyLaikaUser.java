@@ -1,5 +1,8 @@
 package space.initiate.Laika.model.user;
 
+/**
+ * Legacy User Class for User Conversion.
+ */
 public class LegacyLaikaUser {
     private String userId;
     private int xp;

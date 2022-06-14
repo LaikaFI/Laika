@@ -52,7 +52,7 @@ public class BridgeDB {
         }
     }
 
-    public boolean fetchIRID(String ir) {
+    public boolean validIR(String ir) {
         //TODO site verif
         //This should check to see if an irid exists, then if it does; if it's already linked
         //if its linked, respond false or if it doesn't exist, respond false.
